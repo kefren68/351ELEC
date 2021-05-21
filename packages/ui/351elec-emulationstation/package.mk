@@ -3,21 +3,21 @@
 # Copyright (C) 2020-present Fewtarius
 
 PKG_NAME="351elec-emulationstation"
-PKG_VERSION="a7f6ef7ca217a381be5f14b5ace81b6a18c8e142"
+PKG_VERSION="0f956ebc2c16b0e57c1caf6bc94e11db50c10b91"
 PKG_GIT_CLONE_BRANCH="main"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/351ELEC/351elec-emulationstation"
 PKG_URL="$PKG_SITE.git"
-PKG_DEPENDS_TARGET="toolchain SDL2-12 freetype curl freeimage bash rapidjson ${OPENGLES} SDL2_mixer libcec fping p7zip vlc"
+PKG_DEPENDS_TARGET="toolchain SDL2 freetype curl freeimage bash rapidjson ${OPENGLES} SDL2_mixer libcec fping p7zip vlc"
 PKG_NEED_UNPACK="busybox"
 PKG_SHORTDESC="Emulationstation emulator frontend"
 PKG_BUILD_FLAGS="-gold"
 GET_HANDLER_SUPPORT="git"
 
 # themes for Emulationstation
-PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET es-theme-art-book-3-2 es-theme-handheld-simple"
+PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET es-theme-art-book-3-2"
 
 PKG_CMAKE_OPTS_TARGET=" -DENABLE_EMUELEC=1 -DGLES2=0 -DDISABLE_KODI=1 -DENABLE_FILEMANAGER=1"
 
@@ -40,6 +40,7 @@ makeinstall_target() {
 
 	mkdir -p $INSTALL/etc/emulationstation/
 	ln -sf /storage/.config/emulationstation/themes $INSTALL/etc/emulationstation/
+	ln -sf /usr/config/emulationstation/es_systems.cfg $INSTALL/etc/emulationstation/es_systems.cfg
 
         cp -rf $PKG_DIR/config/*.cfg $INSTALL/usr/config/emulationstation
         cp -rf $PKG_DIR/config/scripts $INSTALL/usr/config/emulationstation  
@@ -49,7 +50,7 @@ makeinstall_target() {
 	find $INSTALL/usr/config/emulationstation/scripts/ -type f -exec chmod o+x {} \; 
 	
 	# Vertical Games are only supported in the OdroidGoAdvance
-    if [[ ${DEVICE} != "OdroidGoAdvance" ]] || [[ ${DEVICE} == "RG351P" ]]; then
+    if [[ ${DEVICE} != "OdroidGoAdvance" ]] || [[ ${DEVICE} =~ RG351 ]]; then
         sed -i "s|, vertical||g" "$INSTALL/usr/config/emulationstation/es_features.cfg"
     fi
 }

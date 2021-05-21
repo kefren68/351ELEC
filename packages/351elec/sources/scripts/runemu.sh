@@ -34,7 +34,7 @@ if [ "$(get_es_setting string LogLevel)" == "minimal" ]; then
     LOG=false
 else
     LOG=true
-    VERBOSE=true
+	VERBOSE=true
 fi
 
 arguments="$@"
@@ -53,7 +53,11 @@ GAMEFOLDER="${ROMNAME//${BASEROMNAME}}"
 if [[ $EMULATOR = "libretro" ]]; then
 	EMU="${CORE}_libretro"
 	LIBRETRO="yes"
+elif [[ $EMULATOR = "retrorun" ]]; then
+	EMU="${CORE}_libretro"
+	RETRORUN="yes"
 else
+
 	EMU="${CORE}"
 fi
 
@@ -96,8 +100,7 @@ function log() {
 		then
 			mkdir -p "$LOGSDIR"
 		fi
-		DATE=$(date +"%b %d %H:%M:%S")
-		echo "${DATE} ${MYNAME}: $1" 2>&1 | tee -a ${LOGSDIR}/${LOGFILE}
+		echo "${MYNAME}: $1" 2>&1 | tee -a ${LOGSDIR}/${LOGFILE}
 	else
 		echo "${MYNAME}: $1"
 	fi
@@ -198,7 +201,7 @@ MYARCH=$(getarch)
 jslisten stop
 
 ### Per emulator/core configurations
-if [ -z ${LIBRETRO} ]
+if [ -z ${LIBRETRO} ] &&  [ -z ${RETRORUN} ]
 then
 	$VERBOSE && log "Configuring for a non-libretro emulator"
 	case ${PLATFORM} in
@@ -312,6 +315,14 @@ then
 			RUNTHIS='${TBASH} "${ROMNAME}"'
 		;;
 		esac
+elif [ -n "${RETRORUN}" ]
+then
+	
+	$VERBOSE && log "Configuring retrorun emulator started"
+	$VERBOSE && log "platform: ${PLATFORM}"
+	$VERBOSE && log "core: ${EMU}"
+	RUNTHIS='${TBASH} /usr/bin/retrorun.sh /tmp/cores/${EMU}.so "${ROMNAME}"'
+
 else
 	$VERBOSE && log "Configuring for a libretro core"
 
@@ -399,7 +410,7 @@ else
 fi
 
 clear_screen
-
+$VERBOSE && log "Show splash screen"
 # Show splash screen if enabled
 SPL=$(get_ee_setting ee_splash.enabled)
 [ "$SPL" -eq "1" ] && (${TBASH} /usr/bin/show_splash.sh "${ROMNAME}") &
@@ -420,7 +431,8 @@ if [[ ${SHADERSET} != 0 ]]; then
 fi
 
 clear_screen
-
+$VERBOSE && log "executing game: ${ROMNAME}"
+$VERBOSE && log "script to execute: ${RUNTHIS}"
 # If the rom is a shell script just execute it, useful for DOSBOX and ScummVM scan scripts
 if [[ "${ROMNAME}" == *".sh" ]]; then
 	$VERBOSE && log "Executing shell script ${ROMNAME}"
@@ -437,6 +449,7 @@ fi
 
 clear_screen
 
+$VERBOSE && log "Checking errors: ${ret_error} "
 if [ "${ret_error}" == "0" ]
 then
 	quit 0
@@ -456,3 +469,4 @@ else
 	fi
 	quit 1
 fi
+

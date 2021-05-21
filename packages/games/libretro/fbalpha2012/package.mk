@@ -20,8 +20,8 @@
 ################################################################################
 
 PKG_NAME="fbalpha2012"
-PKG_VERSION="046e3cadab37b3e4e737082a1fa4927f128a5c4b"
-PKG_SHA256="8cf7eaae31891c69dd7d2a3564ddd66ec13cfb1623eabfafae0cb38130a54e4e"
+PKG_VERSION="e0542855dd4301e2af18213c42cc150e9d925819"
+PKG_SHA256="af8da5cdb40583d30a32540e05964ed0381082ccb4c32bb878a56a1f76362327"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/fbalpha2012"

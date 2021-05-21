@@ -2,13 +2,13 @@
 # Copyright (C) 2019-present Shanti Gilbert (https://github.com/shantigilbert)
 
 PKG_NAME="PPSSPPSDL"
-PKG_VERSION="7f4c83728c9839cfff8274472a148179ecfe6d68"
+PKG_VERSION="138d81e14d9e71ea458b405df333fc015f84f460"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/hrydgard/ppsspp"
 PKG_URL="https://github.com/hrydgard/ppsspp.git"
-PKG_DEPENDS_TARGET="toolchain ${OPENGLES} ffmpeg libzip libpng SDL2-12 zlib zip vulkan-loader"
+PKG_DEPENDS_TARGET="toolchain ${OPENGLES} ffmpeg libzip libpng17 SDL2 zlib zip vulkan-loader"
 PKG_SHORTDESC="PPSSPPDL"
 PKG_LONGDESC="PPSSPP Standalone"
 GET_HANDLER_SUPPORT="git"
