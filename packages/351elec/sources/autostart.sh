@@ -74,10 +74,6 @@ if [ ! -L "$CONFIG_DIR" ]; then
   ln -sf $CONFIG_DIR2 $CONFIG_DIR
 fi
 
-### Necessary for OS initialization and updates
-
-set_ee_setting updates.type daily
-
 # Create the distribution directory if it doesn't exist, sync it if it does
 if [ ! -d "/storage/.config/distribution" ]
 then
@@ -99,11 +95,13 @@ rsync --ignore-existing -raz /usr/config/remappings/* /storage/remappings/ &
 # Copy OpenBOR
 rsync --ignore-existing -raz /usr/config/openbor /storage &
 
-# copy bezel if it doesn't exists
-if [ ! -f "/storage/roms/bezels/default.cfg" ]; then
-  mkbezels/
-  rsync --ignore-existing -raz /usr/share/retroarch-overlays/bezels/* /storage/roms/bezels/ &
-fi
+## Not needed any more
+## copy bezel if it doesn't exists
+#if [ ! -f "/storage/roms/bezels/default.cfg" ]; then
+#  mkbezels/
+#  rsync --ignore-existing -raz /usr/share/retroarch-overlays/bezels/* /storage/roms/bezels/ &
+#fi
+##
 
 # Copy pico-8
 cp -f  "/usr/bin/pico-8.sh" "/storage/roms/pico-8/Start Pico-8.sh" &
@@ -123,17 +121,17 @@ rm -rf /storage/.config/distribution/ports
 # End Automatic updates
 
 # Set video mode, this has to be done before starting ES
-DEFE=$(get_ee_setting ee_videomode)
-
-if [ "${DEFE}" != "Custom" ]; then
-    [ ! -z "${DEFE}" ] && echo "${DEFE}" > /sys/class/display/mode
-fi
-
-if [ -s "/storage/.config/EE_VIDEO_MODE" ]; then
-        echo $(cat /storage/.config/EE_VIDEO_MODE) > /sys/class/display/mode
-elif [ -s "/flash/EE_VIDEO_MODE" ]; then
-        echo $(cat /flash/EE_VIDEO_MODE) > /sys/class/display/mode
-fi
+#DEFE=$(get_ee_setting ee_videomode)
+#
+#if [ "${DEFE}" != "Custom" ]; then
+#    [ ! -z "${DEFE}" ] && echo "${DEFE}" > /sys/class/display/mode
+#fi
+#
+#if [ -s "/storage/.config/EE_VIDEO_MODE" ]; then
+#        echo $(cat /storage/.config/EE_VIDEO_MODE) > /sys/class/display/mode
+#elif [ -s "/flash/EE_VIDEO_MODE" ]; then
+#        echo $(cat /flash/EE_VIDEO_MODE) > /sys/class/display/mode
+#fi
 
 # finally we correct the FB according to video mode
 /usr/bin/setres.sh
@@ -198,7 +196,7 @@ do
     then
       mv "/storage/.config/${GAME}" "${GAMEDATA}/${GAME}"
     else
-      rsync -a "/usr/config/${GAME}" "${GAMEDATA}/${GAME}"
+      rsync -a "/usr/config/${GAME}/" "${GAMEDATA}/${GAME}/"
     fi
   fi
 
@@ -274,6 +272,12 @@ BRIGHTNESS=$(get_ee_setting system.brightness)
 if [[ ! "${BRIGHTNESS}" =~ [0-9] ]]
 then
   BRIGHTNESS=255
+fi
+
+# Ensure user doesn't get "locked out" with super low brightness
+if [[ "${BRIGHTNESS}" -lt "12" ]]
+then
+  BRIGHTNESS=12
 fi
 BRIGHTNESS=$(printf "%.0f" ${BRIGHTNESS})
 echo ${BRIGHTNESS} > /sys/class/backlight/backlight/brightness

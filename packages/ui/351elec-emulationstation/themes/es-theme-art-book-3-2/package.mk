@@ -4,17 +4,19 @@
 
 PKG_NAME="es-theme-art-book-3-2"
 PKG_REV="1"
-PKG_VERSION="8239f8f7d9ffe18882e5ac4ed09797e61d94ac89"
+PKG_VERSION="5b27f5548c7a4ec23408d7e6fddd3983b894838d"
 PKG_ARCH="any"
 PKG_LICENSE="CUSTOM"
 PKG_SITE="https://github.com/anthonycaccese/es-theme-art-book-3-2"
 PKG_URL="$PKG_SITE.git"
 GET_HANDLER_SUPPORT="git"
 PKG_SHORTDESC="ArtBook"
-PKG_LONGDESC="Art Book - 351ELEC default theme"
+PKG_LONGDESC="Art Book - 351ELEC default theme for RG351P/M"
 PKG_TOOLCHAIN="manual"
 
-makeinstall_target() {
-  mkdir -p $INSTALL/usr/config/emulationstation/themes/$PKG_NAME
-  cp -rf * $INSTALL/usr/config/emulationstation/themes/$PKG_NAME
-}
+if [ "${DEVICE}" = "RG351P" ]; then
+  makeinstall_target() {
+    mkdir -p $INSTALL/usr/config/emulationstation/themes/$PKG_NAME
+    cp -rf * $INSTALL/usr/config/emulationstation/themes/$PKG_NAME
+  }
+fi
